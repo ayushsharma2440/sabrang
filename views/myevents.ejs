@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Events</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4bb543;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .welcome-message {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            color: #6c757d;
+            font-weight: 300;
+        }
+        
+        .events-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: white;
+        }
+        
+        .events-table thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .events-table th {
+            padding: 1.2rem 1rem;
+            text-align: left;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .events-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+        
+        .events-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .events-table tbody tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .whatsapp-link {
+            display: inline-flex;
+            align-items: center;
+            background-color: #25D366;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .whatsapp-link:hover {
+            background-color: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .whatsapp-link i {
+            margin-right: 0.5rem;
+        }
+        
+        .mobile-number {
+            display: flex;
+            align-items: center;
+        }
+        
+        .mobile-number i {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+        
+        .no-events {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .events-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .welcome-message {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="welcome-message">Welcome, <%= user.name %></h1>
+            <p class="subtitle">Here are all the events you've registered for</p>
+        </header>
+        
+        <table class="events-table">
+            <thead>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Coordinator</th>
+                    <th>Contact</th>
+                    <th>WhatsApp Group</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (datas && datas.length > 0) { %>
+                    <% datas.forEach(event => { %>
+                        <tr>
+                            <td><%= event.name %></td>
+                            <td><%= event.coordinator %></td>
+                            <td class="mobile-number">
+                                <i class="fas fa-phone-alt"></i>
+                                <%= event.mobile %>
+                            </td>
+                            <td>
+                                <% if (event.link) { %>
+                                    <a href="https://<%= event.link %>" class="whatsapp-link" target="_blank">
+                                        <i class="fab fa-whatsapp"></i> Join Group
+                                    </a>
+                                <% } else { %>
+                                    <span>Not available</span>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="4" class="no-events">
+                            You haven't registered for any events yet.
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add animation to table rows
+            const rows = document.querySelectorAll('.events-table tbody tr');
+            rows.forEach((row, index) => {
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(20px)';
+                row.style.transition = `all 0.3s ease ${index * 0.1}s`;
+                
+                setTimeout(() => {
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateY(0)';
+                }, 100);
+            });
+            
+            // Make WhatsApp links more prominent
+            const whatsappLinks = document.querySelectorAll('.whatsapp-link');
+            whatsappLinks.forEach(link => {
+                link.addEventListener('mouseenter', () => {
+                    link.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.15)';
+                });
+                
+                link.addEventListener('mouseleave', () => {
+                    link.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
