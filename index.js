@@ -1,9 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
-const { login } = require("./controller/controller");
+const { login, signup } = require("./controller/controller");
 
-mongoose.connect("mongodb+srv://ayushsharma2440:ayush%40%4044@sabrang.icpskhz.mongodb.net/sabrang")
+mongoose.connect("mongodb://localhost:27017/sabrang")
   .then(() => console.log("Database Connected"))
   .catch((err) => console.log("Connection Error:", err));
 
@@ -24,6 +24,11 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", login);
+app.post("/signup",signup);
+
+app.get("/signup",(req,res)=>{
+  res.render("signup");
+})
 
 app.listen(8000, () => {
   console.log("Server started on port 8000");

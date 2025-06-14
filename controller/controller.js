@@ -1,4 +1,5 @@
 const { User, Event } = require("../models/models");
+const shortid = require("shortid");
 
 async function login(req, res) {
   const users = await User.findOne({ email: req.body.email });
@@ -23,4 +24,26 @@ async function data(emails) {
     return eventData;
 }
 
-module.exports = { login };
+async function signup(req,res){
+const referalstring = shortid();
+
+const newuser = await User.create({
+  name:req.body.username,
+  email:req.body.email,
+  password:req.body.password,
+  referalID:referalstring,
+})
+
+if (req.body['referral-code']) {
+  const user = await User.findOneAndUpdate(
+    { referalID: req.body['referral-code'] },
+    { $inc: { referalcount: 1 } },
+    { new: true } 
+  );
+}
+
+return res.redirect("/login")
+}
+
+module.exports = { login,signup };
+ 
